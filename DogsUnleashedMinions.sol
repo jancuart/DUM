@@ -23,11 +23,12 @@ contract DogsUnleashedMinions is ERC721Enumerable, Ownable {
 
   string public baseURI;
   string public baseExtension = ".json";
-  uint256 public cost = 0.06 ether;
+  uint256 public cost = 0.05 ether;
   uint256 public maxSupply = 5000;
   uint256 public maxMintAmount = 15;
   bool public paused = false;
-  mapping(address => bool) public whitelisted;
+  address[] public whitelistedAddresses;
+  bool public onlyWhitelisted = true;
   address payable public payments;
 
   constructor(
@@ -54,10 +55,13 @@ contract DogsUnleashedMinions is ERC721Enumerable, Ownable {
     require(_mintAmount <= maxMintAmount);
     require(supply + _mintAmount <= maxSupply);
 
+
+
     if (msg.sender != owner()) {
-        if(whitelisted[msg.sender] != true) {
-          require(msg.value >= cost * _mintAmount);
-        }
+        if(onlyWhitelisted == true) {
+            require(isWhitelisted(msg.sender), "user is not whitelisted");
+            uint256 ownerMintedCount = addressMintedBalance[msg.sender];
+            require(ownerMintedCount + _mintAmount <= nftPerAddressLimit, "max NFT per address exceeded");
     }
 
     for (uint256 i = 1; i <= _mintAmount; i++) {
@@ -117,10 +121,15 @@ contract DogsUnleashedMinions is ERC721Enumerable, Ownable {
     paused = _state;
   }
  
- function whitelistUser(address _user) public onlyOwner {
-    whitelisted[_user] = true;
+  function whitelistUsers(address[] calldata _users) public onlyOwner {
+    delete whitelistedAddresses;
+    whitelistedAddresses = _users;
   }
- 
+
+  function setOnlyWhitelisted(bool _state) public onlyOwner {
+    onlyWhitelisted = _state;
+  }
+  
   function removeWhitelistUser(address _user) public onlyOwner {
     whitelisted[_user] = false;
   }
