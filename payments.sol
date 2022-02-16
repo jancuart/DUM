@@ -25,12 +25,12 @@ contract payments is PaymentSplitter {
 
 /**
  ["0x0D4997109ef126027b2f195C9788cccecEE4fF69", 
- "",
- ""]
+ "0xA3042Eb8cAEee4faD4A421aD506E1E2c82DA6D84",
+ "0x2239aC96D697f0C6edb012b0A90f3156b6fA60Cc"]
  */
  
  /**
  [10, 
- 40,
- 40]
+ 80,
+ 10]
  */
